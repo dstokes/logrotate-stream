@@ -8,9 +8,11 @@
   "author": "Drew Stokes",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "log-rotate": "~0.2.0"
+    "log-rotate": "~0.2.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tape": "~2.1.0"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/dstokes/logrotate-stream.git"
