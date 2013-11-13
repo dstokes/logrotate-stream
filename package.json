@@ -1,0 +1,27 @@
+{
+  "name": "logrotate-stream",
+  "version": "0.0.1",
+  "description": "Pipe log data to a stream, fuggetabout rotation",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Drew Stokes",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "log-rotate": "~0.2.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dstokes/logrotate-stream.git"
+  },
+  "keywords": [
+    "log",
+    "rotate",
+    "pipe",
+    "stream"
+  ],
+  "bugs": {
+    "url": "https://github.com/dstokes/logrotate-stream/issues"
+  }
+}
