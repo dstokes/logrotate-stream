@@ -8,7 +8,6 @@ module.exports = LogStream;
 util.inherits(LogStream, Writable);
 
 function LogStream(options) {
-  if(typeof options == 'string') options = {file:options};
   if (! (this instanceof LogStream)) { return new LogStream(options); }
   Writable.call(this, options);
 
