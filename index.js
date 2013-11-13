@@ -36,7 +36,6 @@ LogStream.prototype._createWriteStream = function() {
 
 LogStream.prototype._write = function(chunk, encoding, cb) {
   var rotate = this.writer.size > this.size;
-
   if (rotate || typeof this.writer.size === 'undefined') {
     if (rotate) this._rotate()
     return this.once('ready', function() {
@@ -55,8 +54,10 @@ LogStream.prototype._rotate = function() {
   // destroy the current log stream
   this.writer.end();
 
-  rotate(this.file, this.rotateOptions, function(err) {
+
+  rotate(this.file, this.rotateOptions, function(err,rotated) {
     if (err) return this.emit('error', err);
+    this.emit('rotated',rotated);
     this._createWriteStream();
   }.bind(this));
 }
