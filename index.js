@@ -52,11 +52,12 @@ LogStream.prototype._write = function(chunk, encoding, cb) {
 }
 
 LogStream.prototype._rotate = function() {
+  var self = this;
   // destroy the current log stream
   this.writer.end();
 
   rotate(this.file, this.rotateOptions, function(err) {
-    if (err) return this.emit('error', err);
-    this._createWriteStream();
-  }.bind(this));
+    if (err) return self.emit('error', err);
+    self._createWriteStream();
+  });
 }
