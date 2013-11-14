@@ -3,6 +3,7 @@ logrotate-stream
 
 A Writable Stream that supports linux logrotate style options
 
+[![Build Status](https://travis-ci.org/dstokes/logrotate-stream.png)](https://travis-ci.org/dstokes/logrotate-stream)
 [![NPM](https://nodei.co/npm/logrotate-stream.png?downloads=true)](https://nodei.co/npm/logrotate-stream/)  
 
 example
