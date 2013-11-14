@@ -55,7 +55,7 @@ LogStream.prototype._rotate = function() {
   // destroy the current log stream
   this.writer.end();
 
-  rotate(this.file, this.rotateOptions, function(err) {
+  rotate(this.file, this.rotateOptions, function(err, rotated) {
     if (err) return self.emit('error', err);
     self.emit('rotated', rotated);
     self._createWriteStream();
