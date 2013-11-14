@@ -4,9 +4,41 @@ var fs = require('fs')
   , logRotate = require('../');
 
 function fileName() { return __dirname +"/test.log_"+ Date.now(); }
-function writes(s, ct) {
+function getFiles(name, cb) {
+  fs.readdir(__dirname,  function(err, files) {
+    if (err) return cb(err);
+    cb(null, files.filter(function(file) {
+      return file.indexOf(path.basename(name)) !== -1;
+    }));
+  });
+}
+function cleanup(name) {
+  getFiles(name, function(err, files) {
+    while (files.length) fs.unlinkSync(__dirname +"/"+ files.shift());
+  });
+}
+
+function getSizes(name, cb) {
+  var sizes = []
+    , ct = 0;
+  function done(err) { if (! --ct) cb(err, sizes); }
+
+  getFiles(name, function(err, files) {
+    ct = files.length;
+    files.forEach(function(file) {
+      fs.stat(__dirname +'/'+ file, function(err, st) {
+        sizes.push(st.size);
+        done(err);
+      });
+    });
+  });
+}
+
+function writes(s, ct, cb) {
   var done = ct || 100
     , inv;
+
+  if (cb) { s.on('finish', cb); }
 
   inv = setInterval(function() {
     var chunk = Date.now() + "\n"; // 14 bytes
@@ -24,38 +56,46 @@ test('rotates based on file size option', function(t) {
 
   var s = logRotate({ file: file, size: 600 });
 
-  s.on('finish', function() {
-    t.equals(files.length, 2, 'should have 2 files');
-    // TODO clean up files
-    t.end();
-  })
-
   s.on('rotated', function(file) {
     files.push(file);
   });
 
   // start writing
-  writes(s, 100);
+  writes(s, 100, function() {
+    t.equals(files.length, 2, 'should have 2 files');
+    cleanup(file);
+    t.end();
+  });
+});
+
+test('writes the correct number of bytes', function(t) {
+  var bytes = 0
+    , file = fileName();
+
+  var s = logRotate({ file: file, size: 600 });
+
+  // start writing
+  writes(s, 100, function() {
+    getSizes(file, function(err, sizes) {
+      var bytes = 0;
+      while (sizes.length) bytes += sizes.shift();
+      t.equals(bytes, 100*14, 'should have 2 files');
+      cleanup(file);
+      t.end();
+    });
+  });
 });
 
 test('keeps the appropriate number of rotated logs', function(t) {
   var file = fileName()
     , s = logRotate({ file: file, size: 600, keep: 5 });
 
-  s.on('finish', function() {
-    console.log('finished');
-    fs.readdir(__dirname, function(err, files) {
-      var kept = 0;
-      for (var i = 0, l = files.length; i < l; i++) {
-        if (files[i].indexOf(path.basename(file)) !== -1) kept++;
-      }
-
-      t.equals(kept, 5, 'should keep 5 files');
-      // TODO clean up files
+  // start writing
+  writes(s, 200, function() {
+    getFiles(file, function(err, files) {
+      t.equals(files.length, 5, 'should keep 5 files');
+      cleanup(file);
       t.end();
     });
-  })
-
-  // start writing
-  writes(s, 200);
+  });
 });
