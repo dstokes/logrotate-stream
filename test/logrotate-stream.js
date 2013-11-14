@@ -72,7 +72,7 @@ test('writes the correct number of bytes', function(t) {
   var bytes = 0
     , file = fileName();
 
-  var s = logRotate({ file: file, size: 600 });
+  var s = logRotate({ file: file, keep: 4, size: 400 });
 
   // start writing
   writes(s, 100, function() {
