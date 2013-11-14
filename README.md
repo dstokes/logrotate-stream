@@ -21,6 +21,32 @@ var stream = require('logrotate-stream')
 someStream.pipe(toLogFile);
 ```
 
+the problem
+===========
+Rotating logs that are being written to with stdio redirection sucks. Using a
+utility like `logrotate` doesn't automagically update your processes log file 
+descriptor and you end up with several empty logs and one mega rotated log.
+
+There's a couple ways to try and deal with this, but they all fall short:
+#### 1. Use `winston`'s log rotation feature for nodejs apps
+
+This requires adding a new dependency and possibly code changes around logging
+logic.
+
+#### 2. Restart your app on `SIGUSR1`
+
+Often times, production apps can't be restarted willy-nilly
+
+#### 3. Use the `copytruncate` feature of `logrotate`
+
+This only works if you don't need to guarantee that all of your log lines are
+persisted. `copytruncate` performs a non-atomic copy before truncating the
+original log, which means you can lose data in the process if the copy is slow.
+
+`logrotate-stream` tries to remedy this situation by acting as an intermediary
+between the application and the file system, piping `stdin` to log files and
+rotating those logfiles when necessary.
+
 options
 =======
 
