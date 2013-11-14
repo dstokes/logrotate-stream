@@ -10,7 +10,7 @@ example
 =======
 ``` js
 var LogStream = require('logrotate-stream')
-  , toLogFile = LogStream({ file: './test.log', keep: 3 });
+  , toLogFile = LogStream({ file: './test.log', size: 1024, keep: 3 });
 
 someLogStream.pipe(toLogFile);
 ```
