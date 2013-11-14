@@ -1,0 +1,11 @@
+#! /usr/bin/env node
+/* vim: set syntax=JavaScript : */
+
+var args = require('optimist').argv
+  , stream = require('../');
+
+args.file = args._.shift();
+
+process.stdin
+  .pipe( stream(args) )
+  .on('error', function(err) { throw err; });

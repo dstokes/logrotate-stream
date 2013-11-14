@@ -2,13 +2,16 @@
   "name": "logrotate-stream",
   "version": "0.0.2",
   "description": "Pipe log data to a stream, fuggetabout rotation",
+  "main": "index.js",
+  "bin": "./bin/logrotate-stream",
   "scripts": {
     "test": "node test/logrotate-stream.js"
   },
   "author": "Drew Stokes",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "log-rotate": "~0.2.2"
+    "log-rotate": "~0.2.2",
+    "optimist": "~0.6.0"
   },
   "devDependencies": {
     "tape": "~2.1.0"
