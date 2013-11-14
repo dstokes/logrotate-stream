@@ -26,7 +26,7 @@ test('can fu',function(t){
 
   var data;
   data = setInterval(function(){
-    b += Date.now()+"\n";// 14 bytes
+    var b = Date.now()+"\n";// 14 bytes
     s.write(b)
     bytes += b.length;
 
