@@ -68,6 +68,17 @@ test('rotates based on file size option', function(t) {
   });
 });
 
+test('properly parses size units', function(t) {
+  var values = { '1024': 1024, '1k': 1024, '2k': 2048, '1m': 1048576, '1g': 1073741824 };
+  Object.keys(values).forEach(function(k) {
+    var file = fileName()
+      , s = logRotate({ file: file, size: k });
+    s.on('ready', function() { cleanup(file); });
+    t.equals(s.size, values[k], 'should parse '+ k +' to '+ values[k]);
+  });
+  t.end();
+});
+
 test('writes the correct number of bytes', function(t) {
   var bytes = 0
     , file = fileName();

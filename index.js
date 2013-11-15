@@ -12,7 +12,7 @@ function LogStream(options) {
   Writable.call(this, options);
 
   this.file = options.file;
-  this.size = (options.size || 51200000000 /* 50MB */);
+  this.size = bytes(options.size || '50m');
   this.rotateOptions = {
     count: (options.keep || 3),
     compress: (options.compress || false)
@@ -60,4 +60,14 @@ LogStream.prototype._rotate = function() {
     self.emit('rotated', rotated);
     self._createWriteStream();
   });
+}
+
+// convert size to bytes
+function bytes(size) {
+  if (typeof size !== 'number') {
+    var index = ['b', 'k','m','g'].indexOf( size.slice(-1).toLowerCase() );
+    if (index !== -1) return (1 << (index * 10)) * size.slice(0, -1);
+    return parseInt(size, 10);
+  }
+  return size;
 }
