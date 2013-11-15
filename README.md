@@ -10,13 +10,13 @@ example
 =======
 On the command line:
 ``` sh
-  node app.js 2>&1 | logrotate-stream app.log --keep 3 --size 1024 --compress
+  node app.js 2>&1 | logrotate-stream app.log --keep 3 --size '50m' --compress
 ```
 
 As a module:
 ``` js
 var stream = require('logrotate-stream')
-  , toLogFile = stream({ file: './test.log', size: 1024, keep: 3 });
+  , toLogFile = stream({ file: './test.log', size: '100k', keep: 3 });
 
 someStream.pipe(toLogFile);
 ```
@@ -52,6 +52,9 @@ options
 
 ### file
 The file log file to write data to.
+
+### size
+The max file size of a log before rotation occurs. Supports `1024`, `1k`, `1m`, `1g`
 
 ### keep
 The number of rotated log files to keep (including the primary log file). 
