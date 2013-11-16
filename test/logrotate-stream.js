@@ -69,7 +69,7 @@ test('rotates based on file size option', function(t) {
 });
 
 test('properly parses size units', function(t) {
-  var values = { '1024': 1024, '1k': 1024, '2k': 2048, '1m': 1048576, '1g': 1073741824 };
+  var values = { '1024': 1024, '1k': 1024, '2k': 2048, '1MB': 1048576, '1g': 1073741824 };
   Object.keys(values).forEach(function(k) {
     var file = fileName()
       , s = logRotate({ file: file, size: k });

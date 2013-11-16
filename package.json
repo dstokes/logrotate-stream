@@ -10,9 +10,9 @@
   "author": "Drew Stokes",
   "license": "BSD-2-Clause",
   "dependencies": {
+    "byt": "~0.1.0",
     "log-rotate": "~0.2.2",
-    "optimist": "~0.6.0",
-    "bytes": "~0.2.1"
+    "optimist": "~0.6.0"
   },
   "devDependencies": {
     "tape": "~2.1.0"
