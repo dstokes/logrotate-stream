@@ -25,6 +25,7 @@ function LogStream(options) {
 LogStream.prototype._createWriteStream = function() {
   var self = this;
   this.writer = fs.createWriteStream(this.file, { flags: 'a+' });
+  this.writer.on('error', function(err) { self.emit('error', err); });
 
   this.writer.once('open', function() {
     fs.stat(self.file, function(err, st) {

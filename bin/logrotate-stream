@@ -8,4 +8,8 @@ args.file = args._.shift();
 
 process.stdin
   .pipe( stream(args) )
-  .on('error', function(err) { throw err; });
+  // attempt to write the error to the app log before dying
+  .on('error', function(err) {
+    require('fs').writeFileSync(args.file, err +"\n", { flag: 'a' });
+    process.exit(1);
+  });
