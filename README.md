@@ -33,7 +33,7 @@ There's a couple ways to try and deal with this, but they all fall short:
 This requires adding a new dependency and possibly code changes around logging
 logic.
 
-#### 2. Restart your app on `SIGUSR1`
+#### 2. Restart your app on `SIGHUP`
 
 Often times, production apps can't be restarted willy-nilly
 
@@ -46,6 +46,32 @@ original log, which means you can lose data in the process if the copy is slow.
 `logrotate-stream` tries to remedy this situation by acting as an intermediary
 between the application and the file system, piping `stdin` to log files and
 rotating those logfiles when necessary.
+
+upstart woes
+============
+If you find yourself using logrotate-stream with upstart, there's a few things
+to consider. Piping to logrotate-stream in your `exec` line will cause upstart
+to track the pid of the logrotate process rather than your app. While stopping
+will still work (most likely emitting an EPIPE error on your app before
+exiting), it would be better if you used a named pipe to redirect your apps output:
+```
+chdir /path/to/app
+
+pre-start script
+  # create a named pipe
+  mkfifo logpipe
+  # create a backgrounded logrotate-stream process and
+  # redirect the named pipe data to it
+  logrotate-stream app.log --keep 3 --size 50m < logpipe &
+end script
+
+# start the app, redirecting stdout & stderr to the named pipe
+exec /usr/local/bin/node index.js 2>&1 >> logpipe
+```
+
+This setup will register the correct pid with upstart, make sure your stdio
+is forwarded to logrotate-stream, and will properly kill the logrotate-stream
+process when your app is stopped.
 
 options
 =======
