@@ -33,7 +33,7 @@ There's a couple ways to try and deal with this, but they all fall short:
 This requires adding a new dependency and possibly code changes around logging
 logic.
 
-#### 2. Restart your app on `SIGHUP`
+#### 2. Restart your app on a process signal
 
 Often times, production apps can't be restarted willy-nilly
 
