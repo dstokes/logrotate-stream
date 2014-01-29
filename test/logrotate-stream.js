@@ -110,3 +110,48 @@ test('keeps the appropriate number of rotated logs', function(t) {
     });
   });
 });
+
+test('chunks large buffers', function(t) {
+  var file = fileName();
+  var s = logRotate({ file: file, keep: 32, size: '1k' });
+
+  s.on('finish', function() {
+    getSizes(file, function(err, sizes) {
+      var bytes = 0, files = 0;
+      while (sizes.length) {
+        files++;
+        bytes += sizes.shift();
+      }
+
+      t.equals(files, 32, 'should write 32 files');
+      t.equals(bytes, total_bytes, 'should write '+ total_bytes +' bytes');
+      cleanup(file);
+      t.end();
+    });
+  });
+
+  var data = '';
+  for (var i = 0, l = 64; i < l; i++) {
+    data += new Array(512).join('1') + '\n';
+  }
+  var total_bytes = data.length;
+  s.write(data);
+  s.end();
+});
+
+test('writes remaining data on finish', function(t) {
+  var file = fileName();
+  var s = logRotate({ file: file, keep: 1, size: '1k' });
+
+  s.writer.on('finish', function() {
+    getSizes(file, function(err, sizes) {
+      t.equals(1, sizes.length, 'should write 1 file');
+      t.equals(14, sizes[0], 'should write 14 bytes');
+      cleanup(file);
+      t.end();
+    });
+  });
+
+  s.write("foo\nbar");
+  s.end("foo\nbar");
+});

@@ -12,14 +12,19 @@ function LogStream(options) {
   if (! (this instanceof LogStream)) { return new LogStream(options); }
   Writable.call(this, options);
 
+  this.last = '';
   this.file = options.file;
   this.size = (byt(options.size) || byt('50m'));
   this.rotateOptions = {
     count: (options.keep || 3),
     compress: (options.compress || false)
   };
-
   this._createWriteStream();
+
+  // cleanup underlying writer
+  this.on('finish', function() {
+    if (this.writer) this.writer.end(this.last || null);
+  });
 }
 
 LogStream.prototype._createWriteStream = function() {
@@ -37,19 +42,32 @@ LogStream.prototype._createWriteStream = function() {
 }
 
 LogStream.prototype._write = function(chunk, encoding, cb) {
-  var rotate = this.writer.size > this.size;
-  if (rotate || typeof this.writer.size === 'undefined') {
-    if (rotate) this._rotate()
-    return this.once('ready', function() {
-      this.writer.write(chunk, encoding)
-      this.writer.size += chunk.length;
-      cb();
-    });
+  var self = this
+    , lines = (this.last + chunk).split("\n");
+  this.last = lines.pop()
+
+  function next() {
+    if (lines.length === 0) return cb();
+    var line = lines.shift() +"\n";
+    if (self.writer.size + line.length > self.size) {
+      self._rotate();
+      self.once('ready', function() {
+        self.writer.size += line.length;
+        self.writer.write(line);
+        next();
+      });
+    } else {
+      self.writer.size += line.length;
+      self.writer.write(line);
+      next();
+    }
   }
 
-  this.writer.write(chunk, encoding)
-  this.writer.size += chunk.length;
-  cb();
+  if (typeof this.writer.size === 'undefined') {
+    this.once('ready', next);
+  } else {
+    next();
+  }
 }
 
 LogStream.prototype._rotate = function() {
