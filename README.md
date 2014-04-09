@@ -66,7 +66,7 @@ pre-start script
 end script
 
 # start the app, redirecting stdout & stderr to the named pipe
-exec /usr/local/bin/node index.js 2>&1 >> logpipe
+exec /usr/local/bin/node index.js > logpipe 2>&1
 ```
 
 This setup will register the correct pid with upstart, make sure your stdio
