@@ -14,7 +14,8 @@ function getFiles(name, cb) {
 }
 function cleanup(name) {
   getFiles(name, function(err, files) {
-    while (files.length) fs.unlinkSync(__dirname +"/"+ files.shift());
+    while (files.length)
+      try { fs.unlinkSync(__dirname +"/"+ files.shift()); } catch (e) {}
   });
 }
 
@@ -62,9 +63,11 @@ test('rotates based on file size option', function(t) {
 
   // start writing
   writes(s, 100, function() {
-    t.equals(files.length, 2, 'should have 2 files');
-    cleanup(file);
-    t.end();
+    setImmediate(function () {
+      t.equals(files.length, 2, 'should have 2 files');
+      cleanup(file);
+      t.end();
+    });
   });
 });
 
@@ -95,6 +98,23 @@ test('writes the correct number of bytes', function(t) {
       t.end();
     });
   });
+});
+
+test('supports object mode writes', function(t) {
+  var file = fileName();
+  var s = logRotate({ file: file, keep: 4, size: 400, objectMode: true });
+
+  function done(err) {
+    if (err) t.fail('failed to support object mode');
+    else t.pass('supports object mode');
+    cleanup(file);
+    t.end();
+  }
+
+  s.on('error', done);
+  s.on('finish', done);
+  s.write({'msg': 'ohai'});
+  s.end();
 });
 
 test('keeps the appropriate number of rotated logs', function(t) {

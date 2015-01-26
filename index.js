@@ -12,6 +12,10 @@ function LogStream(options) {
   if (! (this instanceof LogStream)) { return new LogStream(options); }
   Writable.call(this, options);
 
+  if (typeof options.objectMode !== 'undefined') {
+    this._writableState.objectMode = !!options.objectMode;
+  }
+
   this.last = '';
   this.file = options.file;
   this.size = (byt(options.size) || byt('50m'));
