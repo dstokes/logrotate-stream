@@ -57,13 +57,11 @@ LogStream.prototype._write = function(chunk, encoding, cb) {
       self._rotate();
       self.once('ready', function() {
         self.writer.size += line.length;
-        self.writer.write(line);
-        next();
+        self.writer.write(line, next);
       });
     } else {
       self.writer.size += line.length;
-      self.writer.write(line);
-      next();
+      self.writer.write(line, next);
     }
   }
 
