@@ -20,8 +20,8 @@ function LogStream(options) {
   this.file = options.file;
   this.size = (byt(options.size) || byt('50m'));
   this.rotateOptions = {
-    count: (options.keep || 3),
-    compress: (options.compress || false)
+    count: options.keep,
+    compress: options.compress
   };
   this._createWriteStream();
 
