@@ -3,7 +3,7 @@ var fs = require('fs')
   , path = require('path')
   , logRotate = require('../');
 
-function fileName() { return __dirname +"/test.log_"+ Date.now(); }
+function fileName() { return __dirname +"/test.log_"+ Math.random(); }
 function getFiles(name, cb) {
   fs.readdir(__dirname,  function(err, files) {
     if (err) return cb(err);
@@ -93,7 +93,7 @@ test('writes the correct number of bytes', function(t) {
     getSizes(file, function(err, sizes) {
       var bytes = 0;
       while (sizes.length) bytes += sizes.shift();
-      t.equals(bytes, 100*14, 'should have 2 files');
+      t.equals(bytes, 100*14, 'should have 4 files');
       cleanup(file);
       t.end();
     });
