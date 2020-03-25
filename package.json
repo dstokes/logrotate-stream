@@ -12,7 +12,7 @@
   "dependencies": {
     "byt": "~0.1.0",
     "log-rotate": "~0.2.8",
-    "optimist": "~0.6.0"
+    "yargs": "~15.3.1"
   },
   "devDependencies": {
     "tape": "~2.1.0"

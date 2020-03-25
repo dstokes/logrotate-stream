@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 /* vim: set syntax=JavaScript : */
 
-var args = require('optimist').argv
+var args = require('yargs').argv
   , stream = require('../');
 
 args.file = args._.shift();
