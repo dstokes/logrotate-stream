@@ -3,7 +3,9 @@
   "version": "0.2.7",
   "description": "Pipe log data to a stream, fuggetabout rotation",
   "main": "index.js",
-  "bin": "./bin/logrotate-stream",
+  "bin": {
+    "logrotate-stream": "bin/logrotate-stream"
+  },
   "scripts": {
     "test": "node test/logrotate-stream.js"
   },
